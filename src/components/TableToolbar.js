@@ -285,6 +285,8 @@ class TableToolbar extends React.Component {
       filterList,
       filterUpdate,
       resetFilters,
+      addColumn,
+      editColumn,
       toggleViewColumn,
       updateColumns,
       title,
@@ -401,6 +403,8 @@ class TableToolbar extends React.Component {
                   data={data}
                   columns={columns}
                   options={options}
+                  addColumn={addColumn}
+                  editColumn={editColumn}
                   onColumnUpdate={toggleViewColumn}
                   updateColumns={updateColumns}
                   components={components}

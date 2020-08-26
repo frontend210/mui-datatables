@@ -28,6 +28,8 @@ const getTextLabels = () => ({
   viewColumns: {
     title: 'Show Columns',
     titleAria: 'Show/Hide Table Columns',
+    addColumn: 'Add Column',
+    editColumn: 'Edit',
   },
   selectedRows: {
     text: 'row(s) selected',

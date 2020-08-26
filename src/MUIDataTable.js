@@ -159,6 +159,8 @@ class MUIDataTable extends React.Component {
         }),
       ]),
     ).isRequired,
+    /** Handler to update columns data of parent component */
+    onUpdateColumns: PropTypes.func,
     /** Options used to describe table */
     options: PropTypes.shape({
       caseSensitive: PropTypes.bool,
@@ -255,6 +257,7 @@ class MUIDataTable extends React.Component {
     options: {},
     data: [],
     columns: [],
+    onUpdateColumns: () => {},
     components: {
       TableBody: DefaultTableBody,
       TableFilter: DefaultTableFilter,
@@ -270,6 +273,9 @@ class MUIDataTable extends React.Component {
 
   constructor(props) {
     super(props);
+    // TODO: remove console log
+    // console.log('Constructor this.props: ', props);
+
     this.tableRef = React.createRef();
     this.tableContent = React.createRef();
     this.draggableHeadCellRefs = {};
@@ -305,7 +311,11 @@ class MUIDataTable extends React.Component {
     };
 
     this.mergeDefaultOptions(props);
+    // TODO: remove console log
+    // console.log('defaultState: ', defaultState);
     this.state = Object.assign(defaultState, this.getInitTableOptions());
+    // TODO: remove console log
+    // console.log('Constructor State: ', this.state);
     this.setTableData = this.setTableData.bind(this);
 
     this.setTableData(props, TABLE_LOAD.INITIAL, true, null, true);
@@ -315,7 +325,9 @@ class MUIDataTable extends React.Component {
     this.setHeadResizeable(this.resizeHeadCellRefs, this.tableRef);
 
     // When we have a search, we must reset page to view it unless on serverSide since paging is handled by the user.
-    if (this.props.options.searchText && !this.props.options.serverSide) this.setState({ page: 0 });
+    if (this.props.options.searchText && !this.props.options.serverSide) {
+      this.setState({ page: 0 });
+    }
 
     this.setTableInit('tableInitialized');
   }
@@ -328,7 +340,7 @@ class MUIDataTable extends React.Component {
     ) {
       this.updateOptions(this.options, this.props);
 
-      var didDataUpdate = this.props.data !== prevProps.data;
+      let didDataUpdate = this.props.data !== prevProps.data;
       if (this.props.data && prevProps.data) {
         didDataUpdate = didDataUpdate && this.props.data.length === prevProps.data.length;
       }
@@ -352,6 +364,11 @@ class MUIDataTable extends React.Component {
     }
   }
 
+  /**
+   * Update this.options with a given object of options  & props.options
+   * @param options
+   * @param props
+   */
   updateOptions(options, props) {
     // set backwards compatibility options
     if (props.options.disableToolbarSelect === true && props.options.selectToolbarPlacement === undefined) {
@@ -369,7 +386,8 @@ class MUIDataTable extends React.Component {
       if (key === 'textLabels' || key === 'downloadOptions') return merge(objValue, srcValue);
       return;
     });
-
+    // TODO: remove console log
+    // console.log('this.options: ', this.options);
     this.handleOptionDeprecation(props);
   }
 
@@ -514,14 +532,18 @@ class MUIDataTable extends React.Component {
     }
   };
 
-  /*
+  /**
    * React currently does not support deep merge for defaultProps. Objects are overwritten
+   * Init this.options with the default options & props.options
+   * @param props
    */
   mergeDefaultOptions(props) {
     const defaultOptions = this.getDefaultOptions();
     const theProps = Object.assign({}, props);
     theProps.options = theProps.options || {};
 
+    // TODO: remove console log
+    // console.log('defaultOptions: ', defaultOptions);
     this.updateOptions(defaultOptions, theProps);
   }
 
@@ -559,6 +581,8 @@ class MUIDataTable extends React.Component {
     }, {});
 
     this.validateOptions(optState);
+    // TODO: remove console log
+    // console.log('getInitTableOptions: ', optState);
     return optState;
   }
 
@@ -1153,12 +1177,84 @@ class MUIDataTable extends React.Component {
       },
       () => {
         this.setTableAction('viewColumnsChange');
-        var cb = this.options.onViewColumnsChange || this.options.onColumnViewChange;
+        const cb = this.options.onViewColumnsChange || this.options.onColumnViewChange;
 
         if (cb) {
           cb(this.state.columns[index].name, this.state.columns[index].display === 'true' ? 'add' : 'remove');
         }
       },
+    );
+  };
+
+  addColumn = (colName = 'NewName') => {
+    this.setState(
+      prevState => {
+        const columns = cloneDeep(prevState.columns);
+
+        // TODO: get all options from user input
+        columns.push({
+          name: colName,
+          display: 'true',
+          download: true,
+          empty: true,
+          filter: false,
+          label: colName,
+          print: true,
+          searchable: true,
+          sort: false,
+          sortCompare: null,
+          sortDescFirst: false,
+          sortThirdClickReset: false,
+          viewColumns: true,
+          customBodyRenderLite: (dataIndex) => {
+            return (
+              <button onClick={() => {
+                const { data } = this.state;
+                data.shift();
+                this.setState({ data });
+              }}>
+                Delete
+              </button>
+            );
+          }
+        });
+
+        const columnOrder = [...prevState.columnOrder];
+        columnOrder.push(columns.length-1);
+
+        return {
+          columns: columns,
+          columnOrder: columnOrder,
+        };
+      },
+      () => {
+        this.setTableAction('addColumn');
+        this.props.onUpdateColumns(this.state.columns);
+        // this.setTableData(this.props, TABLE_LOAD.INITIAL, true, () => {
+        //   this.setTableAction('propsUpdate');
+        // });
+      },
+    );
+  };
+
+  editColumn = (index, colName = 'EditName') => {
+    this.setState(
+        prevState => {
+          const columns = cloneDeep(prevState.columns);
+          columns[index].name = colName;
+          columns[index].label = colName;
+          return {
+            columns: columns,
+          };
+        },
+        () => {
+          this.setTableAction('editColumn');
+
+          const cb = this.options.onViewColumnsChange || this.options.onColumnViewChange;
+          if (cb) {
+            cb(this.state.columns[index].name, this.state.columns[index].display === 'true' ? 'add' : 'remove');
+          }
+        },
     );
   };
 
@@ -1171,8 +1267,8 @@ class MUIDataTable extends React.Component {
       },
       () => {
         this.setTableAction('viewColumnsChange');
-        var cb = this.options.onViewColumnsChange || this.options.onColumnViewChange;
 
+        const cb = this.options.onViewColumnsChange || this.options.onColumnViewChange;
         if (cb) {
           cb(null, 'update', newColumns);
         }
@@ -1805,19 +1901,24 @@ class MUIDataTable extends React.Component {
       title,
       components: { TableBody, TableFilterList, TableFooter, TableHead, TableResize, TableToolbar, TableToolbarSelect },
     } = this.props;
+
+    // TODO: remove console log
+    // console.log('Render() this.props: ', this.props);
+    // console.log('Render() this.state: ', this.state);
+
     const {
-      announceText,
       activeColumn,
+      announceText,
+      columns,
+      expandedRows,
       data,
       displayData,
-      columns,
-      page,
       filterData,
       filterList,
-      selectedRows,
+      page,
       previousSelectedRow,
-      expandedRows,
       searchText,
+      selectedRows,
       sortOrder,
       serverSideFilterList,
       columnOrder,
@@ -1929,6 +2030,8 @@ class MUIDataTable extends React.Component {
               searchClose={this.searchClose}
               tableRef={this.getTableContentRef}
               title={title}
+              addColumn={this.addColumn}
+              editColumn={this.editColumn}
               toggleViewColumn={this.toggleViewColumn}
               updateColumns={this.updateColumns}
               setTableAction={this.setTableAction}

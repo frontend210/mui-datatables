@@ -38,98 +38,101 @@ class Example extends React.Component {
         ["Glen Nixon", "Corporate Counselor", "Arlington", 44, "$80,000"],
         ["Gabby Strickland", "Business Process Consultant", "Scottsdale", 26, "$45,000"],
         ["Mason Ray", "Computer Scientist", "San Francisco", 39, "$142,000"]
-      ]
+      ],
+      columns: [
+        {
+          name: "Delete",
+          options: {
+            filter: false,
+            sort: false,
+            empty: true,
+            customBodyRenderLite: (dataIndex) => {
+              return (
+                  <button onClick={() => {
+                    const { data } = this.state;
+                    data.shift();
+                    this.setState({ data });
+                  }}>
+                    Delete
+                  </button>
+              );
+            }
+          }
+        },
+        {
+          name: "Edit",
+          options: {
+            filter: false,
+            sort: false,
+            empty: true,
+            customBodyRenderLite: (dataIndex, rowIndex) => {
+              return (
+                  <button onClick={() => window.alert(`Clicked "Edit" for row ${rowIndex} with dataIndex of ${dataIndex}`)}>
+                    Edit
+                  </button>
+              );
+            }
+          }
+        },
+        {
+          name: "Name",
+          options: {
+            filter: true,
+          }
+        },
+        {
+          label: "Modified Title Label",
+          name: "Title",
+          options: {
+            filter: true,
+          }
+        },
+        {
+          name: "Location",
+          options: {
+            filter: false,
+          }
+        },
+        {
+          name: "Age",
+          options: {
+            filter: true,
+          }
+        },
+        {
+          name: "Salary",
+          options: {
+            filter: true,
+            sort: false,
+          }
+        },
+        {
+          name: "Add",
+          options: {
+            filter: false,
+            sort: false,
+            empty: true,
+            customBodyRenderLite: (dataIndex) => {
+              return (
+                  <button onClick={() => {
+                    const { data } = this.state;
+                    data.unshift(["Mason Ray", "Computer Scientist", "San Francisco", 39, "$142,000"]);
+                    this.setState({ data });
+                  }}>
+                    Add
+                  </button>
+              );
+            }
+          }
+        },
+      ],
     };
   }
 
+  onUpdateColumns = columns => this.setState({ columns })
+
   render() {
-    const columns = [
-      {
-        name: "Delete",
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => {
-            return (
-              <button onClick={() => {
-                const { data } = this.state;
-                data.shift();
-                this.setState({ data });
-              }}>
-                Delete
-              </button>
-            );
-          }
-        }
-      },
-      {
-        name: "Edit",
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex, rowIndex) => {
-            return (
-              <button onClick={() => window.alert(`Clicked "Edit" for row ${rowIndex} with dataIndex of ${dataIndex}`)}>
-                Edit
-              </button>
-            );
-          }
-        }
-      },
-      {
-        name: "Name",
-        options: {
-          filter: true,
-        }
-      },
-      {
-        label: "Modified Title Label",
-        name: "Title",
-        options: {
-          filter: true,
-        }
-      },
-      {
-        name: "Location",
-        options: {
-          filter: false,
-        }
-      },
-      {
-        name: "Age",
-        options: {
-          filter: true,
-        }
-      },
-      {
-        name: "Salary",
-        options: {
-          filter: true,
-          sort: false,
-        }
-      },
-      {
-        name: "Add",
-        options: {
-          filter: false,
-          sort: false,
-          empty: true,
-          customBodyRenderLite: (dataIndex) => {
-            return (
-              <button onClick={() => {
-                const { data } = this.state;
-                data.unshift(["Mason Ray", "Computer Scientist", "San Francisco", 39, "$142,000"]);
-                this.setState({ data });
-              }}>
-                Add
-              </button>
-            );
-          }
-        }
-      },
-    ];
+    const { data, columns } = this.state;
 
     const data1 = [
       {Name: "Gabby George", Title: "Business Analyst", Location: "Minneapolis", Age: 30, Salary: "$100,000"},
@@ -170,11 +173,22 @@ class Example extends React.Component {
       responsive: 'vertical',
       onColumnSortChange: (changedColumn, direction) => console.log('changedColumn: ', changedColumn, 'direction: ', direction),
       onChangeRowsPerPage: numberOfRows => console.log('numberOfRows: ', numberOfRows),
-      onChangePage: currentPage => console.log('currentPage: ', currentPage)
+      onChangePage: currentPage => console.log('currentPage: ', currentPage),
+      // onTableChange: (action, tableState) => {
+      //   console.log(action, tableState);
+      // },
+      // onViewColumnsChange: _ => {},
+      // onColumnViewChange: _ => {},
     };
 
     return (
-      <MUIDataTable title={"ACME Employee list"} data={this.state.data} columns={columns} options={options} />
+      <MUIDataTable
+        title={"ACME Employee list"}
+        data={data}
+        columns={columns}
+        onUpdateColumns={this.onUpdateColumns}
+        options={options}
+      />
     );
 
   }

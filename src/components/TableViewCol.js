@@ -6,6 +6,9 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import CreateIcon from '@material-ui/icons/Create';
 
 const useStyles = makeStyles(
   theme => ({
@@ -37,11 +40,19 @@ const useStyles = makeStyles(
       marginLeft: '8px',
       color: theme.palette.text.primary,
     },
+    showColumns: {
+      display: 'flex',
+      'align-items': 'center',
+      'justify-content': 'space-between'
+    },
+    editButton: {
+      float: 'right',
+    }
   }),
   { name: 'MUIDataTableViewCol' },
 );
 
-const TableViewCol = ({ columns, options, components = {}, onColumnUpdate, updateColumns }) => {
+const TableViewCol = ({ columns, options, components = {}, addColumn, editColumn, onColumnUpdate, updateColumns }) => {
   const classes = useStyles();
   const textLabels = options.textLabels.viewColumns;
   const CheckboxComponent = components.Checkbox || Checkbox;
@@ -60,32 +71,44 @@ const TableViewCol = ({ columns, options, components = {}, onColumnUpdate, updat
           return (
             column.display !== 'excluded' &&
             column.viewColumns !== false && (
-              <FormControlLabel
-                key={index}
-                classes={{
-                  root: classes.formControl,
-                  label: classes.label,
-                }}
-                control={
-                  <CheckboxComponent
-                    color="primary"
-                    data-description="table-view-col"
-                    className={classes.checkbox}
-                    classes={{
-                      root: classes.checkboxRoot,
-                      checked: classes.checked,
-                    }}
-                    onChange={() => handleColChange(index)}
-                    checked={column.display === 'true'}
-                    value={column.name}
-                  />
-                }
-                label={column.label}
-              />
+              <div key={index} className={classes.showColumns}>
+                <FormControlLabel
+                  classes={{
+                    root: classes.formControl,
+                    label: classes.label,
+                  }}
+                  control={
+                    <CheckboxComponent
+                      color="primary"
+                      data-description="table-view-col"
+                      className={classes.checkbox}
+                      classes={{
+                        root: classes.checkboxRoot,
+                        checked: classes.checked,
+                      }}
+                      onChange={() => handleColChange(index)}
+                      checked={column.display === 'true'}
+                      value={column.name}
+                    />
+                  }
+                  label={column.label}
+                />
+                <IconButton
+                  data-testid={textLabels.editColumn}
+                  aria-label={textLabels.editColumn}
+                  className={classes.editButton}
+                  onClick={() => editColumn(index)}
+                >
+                  <CreateIcon color="primary" fontSize="small"/>
+                </IconButton>
+              </div>
             )
           );
         })}
       </FormGroup>
+      <Button color="primary" onClick={() => addColumn()}>
+        {textLabels.addColumn}
+      </Button>
     </FormControl>
   );
 };
