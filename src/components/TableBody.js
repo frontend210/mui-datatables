@@ -232,13 +232,16 @@ class TableBody extends React.Component {
       tableId,
     } = this.props;
     const tableRows = this.buildRows();
+    // TODO: remove console log
+    // console.log('tableRows', tableRows);
+    // [{ data: Array(8), dataIndex: 1, parentDataIndex: 3 }]
     const visibleColCnt = columns.filter(c => c.display === 'true').length;
 
     return (
       <MuiTableBody>
         {tableRows && tableRows.length > 0 ? (
           tableRows.map((data, rowIndex) => {
-            const { data: row, dataIndex } = data;
+            const { data: row, dataIndex, parentDataIndex } = data;
 
             if (options.customRowRender) {
               return options.customRowRender(row, dataIndex, rowIndex);
@@ -249,7 +252,9 @@ class TableBody extends React.Component {
             let bodyClasses = options.setRowProps ? options.setRowProps(row, dataIndex, rowIndex) || {} : {};
 
             const processedRow = this.processRow(row, columnOrder);
-
+            // TODO: remove console log
+            // console.log('processedRow', processedRow);
+            // [{ value: "Gabby George", index: 0 }]
             return (
               <React.Fragment key={rowIndex}>
                 <TableBodyRow
@@ -267,7 +272,8 @@ class TableBody extends React.Component {
                     [bodyClasses.className]: bodyClasses.className,
                   })}
                   data-testid={'MUIDataTableBodyRow-' + dataIndex}
-                  id={'MUIDataTableBodyRow-' + dataIndex}>
+                  id={'MUIDataTableBodyRow-' + dataIndex}
+                >
                   <TableSelectCell
                     onChange={this.handleRowSelect.bind(null, {
                       index: this.getRowIndex(rowIndex),
@@ -307,7 +313,8 @@ class TableBody extends React.Component {
                           print={columns[column.index].print}
                           options={options}
                           tableId={tableId}
-                          key={column.index}>
+                          key={column.index}
+                        >
                           {column.value}
                         </TableBodyCell>
                       ),
@@ -323,7 +330,8 @@ class TableBody extends React.Component {
               colSpan={options.selectableRows !== 'none' || options.expandableRows ? visibleColCnt + 1 : visibleColCnt}
               options={options}
               colIndex={0}
-              rowIndex={0}>
+              rowIndex={0}
+            >
               <Typography variant="body1" className={classes.emptyTitle} component={'div'}>
                 {options.textLabels.body.noMatch}
               </Typography>

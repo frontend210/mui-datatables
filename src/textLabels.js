@@ -15,6 +15,8 @@ const getTextLabels = () => ({
   },
   toolbar: {
     search: 'Search',
+    expandAll: 'Expand All',
+    collapseAll: 'Collapse All',
     downloadCsv: 'Download CSV',
     print: 'Print',
     viewColumns: 'View Columns',

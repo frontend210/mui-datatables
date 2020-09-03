@@ -48,8 +48,12 @@ class TableSelectCell extends React.Component {
     checked: PropTypes.bool.isRequired,
     /** Select cell part of fixed header */
     fixedHeader: PropTypes.bool,
+    /** Select cell part of fixed select column */
+    fixedSelectColumn: PropTypes.bool,
     /** Callback to trigger cell update */
     onChange: PropTypes.func,
+    /** Callback to trigger cell expand */
+    onExpand: PropTypes.func,
     /** Extend the style applied to components */
     classes: PropTypes.object,
     /** Is expandable option enabled */
@@ -59,6 +63,10 @@ class TableSelectCell extends React.Component {
     /** Is selectable option enabled */
     selectableOn: PropTypes.string,
     /** Select cell disabled on/off */
+    // selectableRowsHideCheckboxes,
+    // isRowExpanded: PropTypes.bool,
+    // isRowSelectable,
+    // dataIndex
   };
 
   static defaultProps = {

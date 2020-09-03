@@ -1,22 +1,25 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Popover from './Popover';
 import TableFilter from './TableFilter';
 import TableViewCol from './TableViewCol';
 import TableSearch from './TableSearch';
-import SearchIcon from '@material-ui/icons/Search';
-import DownloadIcon from '@material-ui/icons/CloudDownload';
-import PrintIcon from '@material-ui/icons/Print';
-import ViewColumnIcon from '@material-ui/icons/ViewColumn';
-import FilterIcon from '@material-ui/icons/FilterList';
 import ReactToPrint from 'react-to-print';
 import find from 'lodash.find';
 import { withStyles } from '@material-ui/core/styles';
 import { createCSVDownload, downloadCSV } from '../utils';
 import cloneDeep from 'lodash.clonedeep';
 import MuiTooltip from '@material-ui/core/Tooltip';
+
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
+import UnfoldLessIcon from '@material-ui/icons/UnfoldLess';
+import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
+import PrintIcon from '@material-ui/icons/Print';
+import ViewColumnIcon from '@material-ui/icons/ViewColumn';
+import FilterIcon from '@material-ui/icons/FilterList';
 
 export const defaultToolbarStyles = theme => ({
   root: {
@@ -275,6 +278,10 @@ class TableToolbar extends React.Component {
     }
   };
 
+  handleExpandAllClick = () => {};
+
+  handleCollapseAllClick = () => {};
+
   render() {
     const {
       data,
@@ -297,7 +304,7 @@ class TableToolbar extends React.Component {
     const Tooltip = components.Tooltip || MuiTooltip;
     const TableViewColComponent = components.TableViewCol || TableViewCol;
     const TableFilterComponent = components.TableFilter || TableFilter;
-    const { search, downloadCsv, print, viewColumns, filterTable } = options.textLabels.toolbar;
+    const { search, expandAll, collapseAll, downloadCsv, print, viewColumns, filterTable } = options.textLabels.toolbar;
     const { showSearch, searchText } = this.state;
 
     const filterPopoverExit = () => {
@@ -350,6 +357,30 @@ class TableToolbar extends React.Component {
                 classes={{ root: this.getActiveIcon(classes, 'search') }}
                 onClick={this.handleSearchIconClick}>
                 <SearchIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {options.expandableRowsHeader &&(
+            <Tooltip title={collapseAll} disableFocusListener>
+              <IconButton
+                aria-label={collapseAll}
+                data-testid={collapseAll + '-iconButton'}
+                classes={{ root: classes.icon }}
+                onClick={this.handleCollapseAllClick}
+              >
+                <UnfoldLessIcon />
+              </IconButton>
+            </Tooltip>
+          )}
+          {options.expandableRowsHeader &&(
+            <Tooltip title={expandAll} disableFocusListener>
+              <IconButton
+                aria-label={expandAll}
+                data-testid={expandAll + '-iconButton'}
+                classes={{ root: classes.icon }}
+                onClick={this.handleExpandAllClick}
+              >
+                <UnfoldMoreIcon />
               </IconButton>
             </Tooltip>
           )}
