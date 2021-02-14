@@ -41,6 +41,7 @@ class TableBodyRow extends React.Component {
     options: PropTypes.object.isRequired,
     /** Callback to execute when row is clicked */
     onClick: PropTypes.func,
+    isRowSelectable: PropTypes.bool,
     /** Current row selected or not */
     rowSelected: PropTypes.bool,
     /** Extend the style applied to components */
@@ -50,7 +51,7 @@ class TableBodyRow extends React.Component {
   render() {
     const { classes, options, rowSelected, onClick, className, isRowSelectable, ...rest } = this.props;
 
-    var methods = {};
+    const methods = {};
     if (onClick) {
       methods.onClick = onClick;
     }

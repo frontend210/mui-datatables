@@ -15,6 +15,8 @@ const getTextLabels = () => ({
   },
   toolbar: {
     search: 'Search',
+    expandAll: 'Expand All',
+    collapseAll: 'Collapse All',
     downloadCsv: 'Download CSV',
     print: 'Print',
     viewColumns: 'View Columns',
@@ -28,6 +30,8 @@ const getTextLabels = () => ({
   viewColumns: {
     title: 'Show Columns',
     titleAria: 'Show/Hide Table Columns',
+    addColumn: 'Add Column',
+    editColumn: 'Edit',
   },
   selectedRows: {
     text: 'row(s) selected',
